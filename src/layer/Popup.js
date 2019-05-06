@@ -320,24 +320,19 @@ Map.include({
 	// @method openPopup(content: String|HTMLElement, latlng: LatLng, options?: Popup options): this
 	// Creates a popup with the specified content and options and opens it in the given point on a map.
 	openPopup: function (popup, latlng, options) {
-		if (!(popup instanceof Popup)) {
-			popup = new Popup(options).setContent(popup);
+		popup = this._initOverlay(Popup, popup, latlng, options);
+
+		if (!this.hasLayer(popup)) {
+			if (this._popup && this._popup.options.autoClose) {
+				this.closePopup();
+			}
+
+			this._popup = popup;
+			this.addLayer(popup);
 		}
 
-		if (latlng) {
-			popup.setLatLng(latlng);
-		}
+		return this;
 
-		if (this.hasLayer(popup)) {
-			return this;
-		}
-
-		if (this._popup && this._popup.options.autoClose) {
-			this.closePopup();
-		}
-
-		this._popup = popup;
-		return this.addLayer(popup);
 	},
 
 	// @method closePopup(popup?: Popup): this

@@ -4,6 +4,7 @@ import * as Util from '../core/Util';
 import {toLatLng} from '../geo/LatLng';
 import {toPoint} from '../geometry/Point';
 import * as DomUtil from '../dom/DomUtil';
+import {Map} from '../map/Map';
 
 /*
  * @class DivOverlay
@@ -238,4 +239,18 @@ export var DivOverlay = Layer.extend({
 		return [0, 0];
 	}
 
+});
+
+Map.include({
+	_initOverlay: function (OverlayClass, overlay, latlng, options) {
+		if (!(overlay instanceof OverlayClass)) {
+			overlay = new OverlayClass(options).setContent(overlay);
+		}
+
+		if (latlng) {
+			overlay.setLatLng(latlng);
+		}
+
+		return overlay;
+	}
 });
