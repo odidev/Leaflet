@@ -184,6 +184,10 @@ export var Tooltip = DivOverlay.extend({
 	_getAnchor: function () {
 		// Where should we anchor the tooltip on the source layer?
 		return toPoint(this._source && this._source._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor() : [0, 0]);
+	},
+
+	_openOnMap: function (map, latlng) {
+		map.openTooltip(this, latlng);
 	}
 
 });
@@ -311,11 +315,7 @@ Layer.include({
 	// @method openTooltip(latlng?: LatLng): this
 	// Opens the bound tooltip at the specified `latlng` or at the default tooltip anchor if no `latlng` is passed.
 	openTooltip: function (layer, latlng) {
-		if (this._tooltip && this._map) {
-			latlng = this._tooltip._prepareOpen(this, layer, latlng);
-
-			// open the tooltip on the map
-			this._map.openTooltip(this._tooltip, latlng);
+		if (this._tooltip && this._tooltip._open(this, layer, latlng)) {
 
 			// Tooltip container may not be defined if not permanent and never
 			// opened.

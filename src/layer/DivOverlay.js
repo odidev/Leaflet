@@ -159,7 +159,9 @@ export var DivOverlay = Layer.extend({
 		return this;
 	},
 
-	_prepareOpen: function (parent, layer, latlng) {
+	_open: function (parent, layer, latlng) {
+		if (!parent._map) { return; }
+
 		if (!(layer instanceof Layer)) {
 			latlng = layer;
 			layer = parent;
@@ -188,7 +190,10 @@ export var DivOverlay = Layer.extend({
 		// update the overlay (content, layout, ect...)
 		this.update();
 
-		return latlng;
+		// open the overlay on the map
+		this._openOnMap(parent._map, latlng);
+
+		return true;
 	},
 
 	_updateContent: function () {

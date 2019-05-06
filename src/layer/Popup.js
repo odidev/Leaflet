@@ -285,6 +285,10 @@ export var Popup = DivOverlay.extend({
 	_getAnchor: function () {
 		// Where should we anchor the popup on the source layer?
 		return toPoint(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
+	},
+
+	_openOnMap: function (map, latlng) {
+		map.openPopup(this, latlng);
 	}
 
 });
@@ -417,11 +421,8 @@ Layer.include({
 	// @method openPopup(latlng?: LatLng): this
 	// Opens the bound popup at the specified `latlng` or at the default popup anchor if no `latlng` is passed.
 	openPopup: function (layer, latlng) {
-		if (this._popup && this._map) {
-			latlng = this._popup._prepareOpen(this, layer, latlng);
-
-			// open the popup on the map
-			this._map.openPopup(this._popup, latlng);
+		if (this._popup) {
+			this._popup._open(this, layer, latlng);
 		}
 
 		return this;
