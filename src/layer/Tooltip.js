@@ -209,13 +209,7 @@ Map.include({
 	// @method openTooltip(content: String|HTMLElement, latlng: LatLng, options?: Tooltip options): this
 	// Creates a tooltip with the specified content and options and open it.
 	openTooltip: function (tooltip, latlng, options) {
-		tooltip = this._initOverlay(Tooltip, tooltip, latlng, options);
-
-		if (!this.hasLayer(tooltip)) {
-			this.addLayer(tooltip);
-		}
-
-		return this;
+		return this._openOverlay(Tooltip, tooltip, latlng, options);
 	},
 
 	// @method closeTooltip(tooltip?: Tooltip): this

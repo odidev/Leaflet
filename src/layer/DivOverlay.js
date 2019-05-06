@@ -242,7 +242,7 @@ export var DivOverlay = Layer.extend({
 });
 
 Map.include({
-	_initOverlay: function (OverlayClass, overlay, latlng, options) {
+	_openOverlay: function (OverlayClass, overlay, latlng, options, fnInit) {
 		if (!(overlay instanceof OverlayClass)) {
 			overlay = new OverlayClass(options).setContent(overlay);
 		}
@@ -251,6 +251,13 @@ Map.include({
 			overlay.setLatLng(latlng);
 		}
 
-		return overlay;
+		if (!this.hasLayer(overlay)) {
+			if (fnInit) {
+				fnInit.call(this, overlay);
+			}
+			this.addLayer(overlay);
+		}
+
+		return this;
 	}
 });
