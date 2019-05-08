@@ -296,5 +296,41 @@ Layer.include({
 		}
 
 		return this;
-	}
+	},
+
+	_openOverlay: function (overlay, layer, latlng) {
+		if (overlay) {
+			overlay._open(this, layer, latlng);
+		}
+		return this;
+	},
+
+	_closeOverlay: function (overlay) {
+		if (overlay) {
+			overlay._close();
+		}
+		return this;
+	},
+
+	_toggleOverlay: function (overlay, target) {
+		if (overlay) {
+			if (overlay._map) {
+				this._closeOverlay(overlay);
+			} else {
+				this._openOverlay(overlay, target);
+			}
+		}
+		return this;
+	},
+
+	_isOverlayOpen: function (overlay) {
+		return overlay ? overlay.isOpen() : false;
+	},
+
+	_setOverlayContent: function (overlay, content) {
+		if (overlay) {
+			overlay.setContent(content);
+		}
+		return this;
+	},
 });

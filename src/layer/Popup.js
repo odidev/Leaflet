@@ -398,48 +398,31 @@ Layer.include({
 	// @method openPopup(latlng?: LatLng): this
 	// Opens the bound popup at the specified `latlng` or at the default popup anchor if no `latlng` is passed.
 	openPopup: function (layer, latlng) {
-		if (this._popup) {
-			this._popup._open(this, layer, latlng);
-		}
-
-		return this;
+		return this._openOverlay(this._popup, layer, latlng);
 	},
 
 	// @method closePopup(): this
 	// Closes the popup bound to this layer if it is open.
 	closePopup: function () {
-		if (this._popup) {
-			this._popup._close();
-		}
-		return this;
+		return this._closeOverlay(this._popup);
 	},
 
 	// @method togglePopup(): this
 	// Opens or closes the popup bound to this layer depending on its current state.
 	togglePopup: function (target) {
-		if (this._popup) {
-			if (this._popup._map) {
-				this.closePopup();
-			} else {
-				this.openPopup(target);
-			}
-		}
-		return this;
+		return this._toggleOverlay(this._popup, target);
 	},
 
 	// @method isPopupOpen(): boolean
 	// Returns `true` if the popup bound to this layer is currently open.
 	isPopupOpen: function () {
-		return (this._popup ? this._popup.isOpen() : false);
+		return this._isOverlayOpen(this._popup);
 	},
 
 	// @method setPopupContent(content: String|HTMLElement|Popup): this
 	// Sets the content of the popup bound to this layer.
 	setPopupContent: function (content) {
-		if (this._popup) {
-			this._popup.setContent(content);
-		}
-		return this;
+		return this._setOverlayContent(this._popup, content);
 	},
 
 	// @method getPopup(): Popup
@@ -451,11 +434,7 @@ Layer.include({
 	_openPopup: function (e) {
 		var layer = e.layer || e.target;
 
-		if (!this._popup) {
-			return;
-		}
-
-		if (!this._map) {
+		if (!this._popup || !this._map) {
 			return;
 		}
 

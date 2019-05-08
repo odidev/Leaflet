@@ -331,16 +331,13 @@ Layer.include({
 	// @method isTooltipOpen(): boolean
 	// Returns `true` if the tooltip bound to this layer is currently open.
 	isTooltipOpen: function () {
-		return this._tooltip.isOpen();
+		return this._isOverlayOpen(this._tooltip);
 	},
 
 	// @method setTooltipContent(content: String|HTMLElement|Tooltip): this
 	// Sets the content of the tooltip bound to this layer.
 	setTooltipContent: function (content) {
-		if (this._tooltip) {
-			this._tooltip.setContent(content);
-		}
-		return this;
+		return this._setOverlayContent(this._tooltip, content);
 	},
 
 	// @method getTooltip(): Tooltip
