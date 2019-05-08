@@ -84,6 +84,10 @@ export var Tooltip = DivOverlay.extend({
 	},
 
 	onRemove: function (map) {
+		if (this.options.interactive) {
+			DomUtil.removeClass(this._container, 'leaflet-clickable');
+			this.removeInteractiveTarget(this._container);
+		}
 		DivOverlay.prototype.onRemove.call(this, map);
 
 		// @namespace Map
@@ -122,6 +126,11 @@ export var Tooltip = DivOverlay.extend({
 		    className = prefix + ' ' + (this.options.className || '') + ' leaflet-zoom-' + (this._zoomAnimated ? 'animated' : 'hide');
 
 		this._contentNode = this._container = DomUtil.create('div', className);
+
+		if (this.options.interactive) {
+			DomUtil.addClass(this._container, 'leaflet-clickable');
+			this._source.addInteractiveTarget(this._container);
+		}
 	},
 
 	_updateLayout: function () {},
@@ -289,43 +298,19 @@ Layer.include({
 	// @method openTooltip(latlng?: LatLng): this
 	// Opens the bound tooltip at the specified `latlng` or at the default tooltip anchor if no `latlng` is passed.
 	openTooltip: function (layer, latlng) {
-		if (this._tooltip && this._tooltip._open(this, layer, latlng)) {
-
-			// Tooltip container may not be defined if not permanent and never
-			// opened.
-			if (this._tooltip.options.interactive && this._tooltip._container) {
-				DomUtil.addClass(this._tooltip._container, 'leaflet-clickable');
-				this.addInteractiveTarget(this._tooltip._container);
-			}
-		}
-
-		return this;
+		return this._openOverlay(this._tooltip, layer, latlng);
 	},
 
 	// @method closeTooltip(): this
 	// Closes the tooltip bound to this layer if it is open.
 	closeTooltip: function () {
-		if (this._tooltip) {
-			this._tooltip._close();
-			if (this._tooltip.options.interactive && this._tooltip._container) {
-				DomUtil.removeClass(this._tooltip._container, 'leaflet-clickable');
-				this.removeInteractiveTarget(this._tooltip._container);
-			}
-		}
-		return this;
+		return this._closeOverlay(this._tooltip);
 	},
 
 	// @method toggleTooltip(): this
 	// Opens or closes the tooltip bound to this layer depending on its current state.
 	toggleTooltip: function (target) {
-		if (this._tooltip) {
-			if (this._tooltip._map) {
-				this.closeTooltip();
-			} else {
-				this.openTooltip(target);
-			}
-		}
-		return this;
+		return this._toggleOverlay(this._tooltip, target);
 	},
 
 	// @method isTooltipOpen(): boolean
