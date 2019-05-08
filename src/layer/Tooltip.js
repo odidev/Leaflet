@@ -1,10 +1,8 @@
-
 import * as Browser from '../core/Browser';
 import {DivOverlay} from './DivOverlay';
 import {toPoint} from '../geometry/Point';
 import {Map} from '../map/Map';
 import {Layer} from './Layer';
-import * as Util from '../core/Util';
 import * as DomUtil from '../dom/DomUtil';
 
 /*
@@ -188,8 +186,9 @@ export var Tooltip = DivOverlay.extend({
 
 	_openOnMap: function (map, latlng) {
 		map.openTooltip(this, latlng);
-	}
+	},
 
+	_layerPropertyName: '_tooltip'
 });
 
 // @namespace Tooltip
@@ -242,17 +241,7 @@ Layer.include({
 	// the layer as the first argument and should return a `String` or `HTMLElement`.
 	bindTooltip: function (content, options) {
 
-		if (content instanceof Tooltip) {
-			Util.setOptions(content, options);
-			this._tooltip = content;
-			content._source = this;
-		} else {
-			if (!this._tooltip || options) {
-				this._tooltip = new Tooltip(options, this);
-			}
-			this._tooltip.setContent(content);
-
-		}
+		this._bindOverlay(Tooltip, content, options);
 
 		this._initTooltipInteractions();
 

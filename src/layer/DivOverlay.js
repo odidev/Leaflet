@@ -268,3 +268,33 @@ Map.include({
 		return this;
 	}
 });
+
+
+Layer.include({
+
+	_getOverlay: function (OverlayClass) {
+		var overlay = OverlayClass.prototype._layerPropertyName;
+		return this[overlay];
+	},
+
+	_setOverlay: function (OverlayClass, value) {
+		var overlay = OverlayClass.prototype._layerPropertyName;
+		this[overlay] = value;
+	},
+
+	_bindOverlay: function (OverlayClass, content, options) {
+
+		if (content instanceof OverlayClass) {
+			Util.setOptions(content, options);
+			this._setOverlay(OverlayClass, content);
+			content._source = this;
+		} else {
+			if (!this._getOverlay(OverlayClass) || options) {
+				this._setOverlay(OverlayClass, new OverlayClass(options, this));
+			}
+			this._getOverlay(OverlayClass).setContent(content);
+		}
+
+		return this;
+	}
+});

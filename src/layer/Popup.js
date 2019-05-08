@@ -4,7 +4,6 @@ import * as DomUtil from '../dom/DomUtil';
 import {Point, toPoint} from '../geometry/Point';
 import {Map} from '../map/Map';
 import {Layer} from './Layer';
-import * as Util from '../core/Util';
 import {Path} from './vector/Path';
 
 /*
@@ -289,8 +288,9 @@ export var Popup = DivOverlay.extend({
 
 	_openOnMap: function (map, latlng) {
 		map.openPopup(this, latlng);
-	}
+	},
 
+	_layerPropertyName: '_popup'
 });
 
 // @namespace Popup
@@ -364,16 +364,7 @@ Layer.include({
 	// the layer as the first argument and should return a `String` or `HTMLElement`.
 	bindPopup: function (content, options) {
 
-		if (content instanceof Popup) {
-			Util.setOptions(content, options);
-			this._popup = content;
-			content._source = this;
-		} else {
-			if (!this._popup || options) {
-				this._popup = new Popup(options, this);
-			}
-			this._popup.setContent(content);
-		}
+		this._bindOverlay(Popup, content, options);
 
 		if (!this._popupHandlersAdded) {
 			this.on({
