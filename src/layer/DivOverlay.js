@@ -259,5 +259,12 @@ Map.include({
 		}
 
 		return this;
+	},
+
+	_closeOverlay: function (overlay) {
+		if (overlay) {
+			this.removeLayer(overlay);
+		}
+		return this;
 	}
 });

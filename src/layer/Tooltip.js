@@ -215,10 +215,7 @@ Map.include({
 	// @method closeTooltip(tooltip?: Tooltip): this
 	// Closes the tooltip given as parameter.
 	closeTooltip: function (tooltip) {
-		if (tooltip) {
-			this.removeLayer(tooltip);
-		}
-		return this;
+		return this._closeOverlay(tooltip);
 	}
 
 });

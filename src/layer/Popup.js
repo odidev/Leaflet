@@ -336,10 +336,7 @@ Map.include({
 			popup = this._popup;
 			this._popup = null;
 		}
-		if (popup) {
-			this.removeLayer(popup);
-		}
-		return this;
+		return this._closeOverlay(popup);
 	}
 });
 
