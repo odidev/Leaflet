@@ -175,6 +175,10 @@ export var DivOverlay = Layer.extend({
 			}
 		}
 
+		if (typeof this._content === 'function' && !this._content(layer || this)) {
+			return; // no content for tooltip
+		}
+
 		if (!latlng) {
 			if (layer.getCenter) {
 				latlng = layer.getCenter();
