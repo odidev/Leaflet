@@ -197,6 +197,14 @@ export var DivOverlay = Layer.extend({
 		return true;
 	},
 
+	_toggle: function (target) {
+		if (this._map) {
+			this._close();
+		} else {
+			this._open(target);
+		}
+	},
+
 	_updateContent: function () {
 		if (!this._content) { return; }
 
@@ -298,39 +306,18 @@ Layer.include({
 		return this;
 	},
 
-	_openOverlay: function (overlay, layer, latlng) {
+	_overlay: function (fn, overlay) {
 		if (overlay) {
-			overlay._open(this, layer, latlng);
-		}
-		return this;
-	},
-
-	_closeOverlay: function (overlay) {
-		if (overlay) {
-			overlay._close();
-		}
-		return this;
-	},
-
-	_toggleOverlay: function (overlay, target) {
-		if (overlay) {
-			if (overlay._map) {
-				this._closeOverlay(overlay);
-			} else {
-				this._openOverlay(overlay, target);
+			if (typeof fn === 'string') {
+				fn = overlay[fn];
 			}
+			fn.apply(overlay, Array.prototype.slice.call(arguments, 2));
 		}
 		return this;
 	},
 
 	_isOverlayOpen: function (overlay) {
 		return overlay ? overlay.isOpen() : false;
-	},
+	}
 
-	_setOverlayContent: function (overlay, content) {
-		if (overlay) {
-			overlay.setContent(content);
-		}
-		return this;
-	},
 });

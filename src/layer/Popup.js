@@ -398,19 +398,19 @@ Layer.include({
 	// @method openPopup(latlng?: LatLng): this
 	// Opens the bound popup at the specified `latlng` or at the default popup anchor if no `latlng` is passed.
 	openPopup: function (layer, latlng) {
-		return this._openOverlay(this._popup, layer, latlng);
+		return this._overlay('_open', this._popup, this, layer, latlng);
 	},
 
 	// @method closePopup(): this
 	// Closes the popup bound to this layer if it is open.
 	closePopup: function () {
-		return this._closeOverlay(this._popup);
+		return this._overlay('_close', this._popup);
 	},
 
 	// @method togglePopup(): this
 	// Opens or closes the popup bound to this layer depending on its current state.
 	togglePopup: function (target) {
-		return this._toggleOverlay(this._popup, target);
+		return this._overlay('_toggle', this._popup, target);
 	},
 
 	// @method isPopupOpen(): boolean
@@ -422,7 +422,7 @@ Layer.include({
 	// @method setPopupContent(content: String|HTMLElement|Popup): this
 	// Sets the content of the popup bound to this layer.
 	setPopupContent: function (content) {
-		return this._setOverlayContent(this._popup, content);
+		return this._overlay('setContent', this._popup, content);
 	},
 
 	// @method getPopup(): Popup

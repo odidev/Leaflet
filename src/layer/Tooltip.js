@@ -298,19 +298,19 @@ Layer.include({
 	// @method openTooltip(latlng?: LatLng): this
 	// Opens the bound tooltip at the specified `latlng` or at the default tooltip anchor if no `latlng` is passed.
 	openTooltip: function (layer, latlng) {
-		return this._openOverlay(this._tooltip, layer, latlng);
+		return this._overlay('_open', this._tooltip, this, layer, latlng);
 	},
 
 	// @method closeTooltip(): this
 	// Closes the tooltip bound to this layer if it is open.
 	closeTooltip: function () {
-		return this._closeOverlay(this._tooltip);
+		return this._overlay('_close', this._tooltip);
 	},
 
 	// @method toggleTooltip(): this
 	// Opens or closes the tooltip bound to this layer depending on its current state.
 	toggleTooltip: function (target) {
-		return this._toggleOverlay(this._tooltip, target);
+		return this._overlay('_toggle', this._tooltip, target);
 	},
 
 	// @method isTooltipOpen(): boolean
@@ -322,7 +322,7 @@ Layer.include({
 	// @method setTooltipContent(content: String|HTMLElement|Tooltip): this
 	// Sets the content of the tooltip bound to this layer.
 	setTooltipContent: function (content) {
-		return this._setOverlayContent(this._tooltip, content);
+		return this._overlay('setContent', this._tooltip, content);
 	},
 
 	// @method getTooltip(): Tooltip
