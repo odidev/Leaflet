@@ -53,13 +53,13 @@ Class.extend = function (props) {
 		delete props.includes;
 	}
 
-	// merge options
-	if (proto.options) {
-		props.options = Util.extend(Util.create(proto.options), props.options);
-	}
-
 	// mix given properties into the prototype
 	Util.extend(proto, props);
+
+	// merge options
+	if (parentProto.options) {
+		proto.options = Util.extend(Util.create(parentProto.options), props.options);
+	}
 
 	proto._initHooks = [];
 
