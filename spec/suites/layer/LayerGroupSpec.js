@@ -1,13 +1,4 @@
 ﻿describe('LayerGroup', function () {
-	describe("#hasLayer", function () {
-		it("returns false when passed undefined, null, or false", function () {
-			var lg = L.layerGroup();
-			expect(lg.hasLayer(undefined)).to.equal(false);
-			expect(lg.hasLayer(null)).to.equal(false);
-			expect(lg.hasLayer(false)).to.equal(false);
-		});
-	});
-
 	describe("#addLayer", function () {
 		it('adds a layer', function () {
 			var lg = L.layerGroup(),
