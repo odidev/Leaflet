@@ -186,13 +186,10 @@ export var Layers = Control.extend({
 
 		if (collapsed) {
 			this._map.on('click', this.collapse, this);
-
-			if (!Browser.android) {
-				DomEvent.on(container, {
-					mouseenter: this.expand,
-					mouseleave: this.collapse
-				}, this);
-			}
+			DomEvent.on(container, {
+				mouseenter: this.expand,
+				mouseleave: this.collapse
+			}, this);
 		}
 
 		var link = this._layersLink = DomUtil.create('a', className + '-toggle', container);
