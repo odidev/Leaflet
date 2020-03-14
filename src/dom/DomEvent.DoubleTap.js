@@ -1,81 +1,63 @@
-import * as Browser from '../core/Browser';
-
 /*
  * Extends the event handling code with double tap support for mobile browsers.
+ *
+ * Note: currently most browsers fire native dblclick, with only a few exceptions
+ * (see https://github.com/Leaflet/Leaflet/issues/7012#issuecomment-595087386)
  */
 
-var _touchstart = Browser.msPointer ? 'MSPointerDown' : Browser.pointer ? 'pointerdown' : 'touchstart';
-var _touchend = Browser.msPointer ? 'MSPointerUp' : Browser.pointer ? 'pointerup' : 'touchend';
-var _pre = '_leaflet_';
-
-// inspired by Zepto touch code by Thomas Fuchs
-export function addDoubleTapListener(obj, handler, id) {
-	var last, touch,
-	    doubleTap = false,
-	    delay = 250;
-
-	function onTouchStart(e) {
-
-		if (Browser.pointer) {
-			if (!e.isPrimary) { return; }
-			if (e.pointerType === 'mouse') { return; } // mouse fires native dblclick
-		} else if (e.touches.length > 1) {
-			return;
+function makeDblclick(event) {
+	// in modern browsers `type` cannot be just overridden:
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Getter_only
+	if (window.MouseEvent) {
+		event = new MouseEvent('dblclick', event);
+	} else {
+		var newEvent = {},
+		    prop, i;
+		for (i in event) {
+			prop = event[i];
+			newEvent[i] = prop && prop.bind ? prop.bind(event) : prop;
 		}
-
-		var now = Date.now(),
-		    delta = now - (last || now);
-
-		touch = e.touches ? e.touches[0] : e;
-		doubleTap = (delta > 0 && delta <= delay);
-		last = now;
+		event = newEvent;
+		event.type = 'dblclick';
 	}
+	event._simulated = true; // for debug purposes, notably for IE
+	                         // (in modern browsers we could rely on .isTrusted property)
+	return event;
+}
 
-	function onTouchEnd(e) {
-		if (doubleTap && !touch.cancelBubble) {
-			if (Browser.pointer) {
-				if (e.pointerType === 'mouse') { return; }
-				// work around .type being readonly with MSPointer* events
-				var newTouch = {},
-				    prop, i;
+var delay = 250;
+export function addDoubleTapListener(obj, handler) {
+	// Most browsers handle double tap natively
+	obj.addEventListener('dblclick', handler);
 
-				for (i in touch) {
-					prop = touch[i];
-					newTouch[i] = prop && prop.bind ? prop.bind(touch) : prop;
-				}
-				touch = newTouch;
+	// On some platforms the browser doesn't fire native dblclicks for touch events.
+	// It seems that in all such cases `detail` property of `click` event is always `1`.
+	// So here we rely on that fact to avoid excessive 'dblclick' simulation when not needed.
+	var last = 0,
+	    detail;
+	handler.simDblclick = function (e) {
+		if (e.detail !== 1 || e.pointerType === 'mouse' ||
+			(e.sourceCapabilities && !e.sourceCapabilities.firesTouchEvents)) { return; }
+
+		var now = Date.now();
+		if (now - last <= delay) {
+			detail++;
+			if (detail === 2) {
+				handler(makeDblclick(e));
 			}
-			touch.type = 'dblclick';
-			touch.button = 0;
-			handler(touch);
-			last = null;
+		} else {
+			detail = 1;
 		}
-	}
-
-	obj[_pre + _touchstart + id] = onTouchStart;
-	obj[_pre + _touchend + id] = onTouchEnd;
-	obj[_pre + 'dblclick' + id] = handler;
-
-	obj.addEventListener(_touchstart, onTouchStart, Browser.passiveEvents ? {passive: false} : false);
-	obj.addEventListener(_touchend, onTouchEnd, Browser.passiveEvents ? {passive: false} : false);
-
-	// On some platforms (notably, chrome<55 on win10 + touchscreen + mouse),
-	// the browser doesn't fire touchend/pointerup events but does fire
-	// native dblclicks. See #4127.
-	// Edge 14 also fires native dblclicks, but only for pointerType mouse, see #5180.
-	obj.addEventListener('dblclick', handler, false);
+		last = now;
+	};
+	obj.addEventListener('click', handler.simDblclick);
 
 	return this;
 }
 
-export function removeDoubleTapListener(obj, id) {
-	var touchstart = obj[_pre + _touchstart + id],
-	    touchend = obj[_pre + _touchend + id],
-	    dblclick = obj[_pre + 'dblclick' + id];
-
-	obj.removeEventListener(_touchstart, touchstart, Browser.passiveEvents ? {passive: false} : false);
-	obj.removeEventListener(_touchend, touchend, Browser.passiveEvents ? {passive: false} : false);
-	obj.removeEventListener('dblclick', dblclick, false);
+export function removeDoubleTapListener(obj, handler) {
+	obj.removeEventListener('dblclick', handler);
+	obj.removeEventListener('click', handler.simDblclick);
 
 	return this;
 }

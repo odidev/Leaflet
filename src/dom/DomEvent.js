@@ -99,7 +99,7 @@ function addOne(obj, type, fn, context) {
 		addPointerListener(obj, type, handler, id);
 
 	} else if (Browser.touch && (type === 'dblclick') && !browserFiresNativeDblClick()) {
-		addDoubleTapListener(obj, handler, id);
+		addDoubleTapListener(obj, handler);
 
 	} else if ('addEventListener' in obj) {
 
@@ -138,7 +138,7 @@ function removeOne(obj, type, fn, context) {
 		removePointerListener(obj, type, id);
 
 	} else if (Browser.touch && (type === 'dblclick') && !browserFiresNativeDblClick()) {
-		removeDoubleTapListener(obj, id);
+		removeDoubleTapListener(obj, handler);
 
 	} else if ('removeEventListener' in obj) {
 
