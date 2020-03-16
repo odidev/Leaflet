@@ -95,13 +95,17 @@ export var msPointer = !window.PointerEvent && window.MSPointerEvent;
 // `true` for all browsers supporting [pointer events](https://msdn.microsoft.com/en-us/library/dn433244%28v=vs.85%29.aspx).
 export var pointer = !!(window.PointerEvent || msPointer);
 
+var _nativeTouchEvents = 'ontouchstart' in window || window.TouchEvent ||
+		window.DocumentTouch && document instanceof window.DocumentTouch;
+
 // @property touch: Boolean
 // `true` for all browsers supporting [touch events](https://developer.mozilla.org/docs/Web/API/Touch_events).
-// This does not necessarily mean that the browser is running in a computer with
+// **This does not necessarily mean** that the browser is running in a computer with
 // a touchscreen, it only means that the browser is capable of understanding
 // touch events.
-export var touch = !window.L_NO_TOUCH && (pointer || 'ontouchstart' in window ||
-		(window.DocumentTouch && document instanceof window.DocumentTouch));
+// Note: also `true` for Windows mobile devices where touch is implemented with pointer events only.
+export var touch = !window.L_NO_TOUCH &&
+		(_nativeTouchEvents || msPointer && navigator.msMaxTouchPoints);
 
 // @property mobileOpera: Boolean; `true` for the Opera browser in a mobile device.
 export var mobileOpera = mobile && opera;
