@@ -62,7 +62,14 @@ export var Draggable = Evented.extend({
 	enable: function () {
 		if (this._enabled) { return; }
 
-		DomEvent.on(this._dragStartTarget, START, this._onDown, this);
+		if (this._dragStartTarget.addEventListener) {
+			this._onDownBound = this._onDown.bind(this);
+			L.Util.splitWords(START).forEach(function (event) {
+				this._dragStartTarget.addEventListener(event, this._onDownBound, true);
+			}, this);
+		} else {
+			DomEvent.on(this._dragStartTarget, START, this._onDown, this);
+		}
 
 		this._enabled = true;
 	},
@@ -78,7 +85,14 @@ export var Draggable = Evented.extend({
 			this.finishDrag();
 		}
 
-		DomEvent.off(this._dragStartTarget, START, this._onDown, this);
+		if (this._dragStartTarget.removeEventListener) {
+			L.Util.splitWords(START).forEach(function (event) {
+				this._dragStartTarget.removeEventListener(event, this._onDownBound, true);
+			}, this);
+			delete this._onDownBound;
+		} else {
+			DomEvent.off(this._dragStartTarget, START, this._onDown, this);
+		}
 
 		this._enabled = false;
 		this._moved = false;
