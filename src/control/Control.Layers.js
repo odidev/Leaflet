@@ -1,7 +1,6 @@
 
 import {Control} from './Control';
 import * as Util from '../core/Util';
-import * as Browser from '../core/Browser';
 import * as DomEvent from '../dom/DomEvent';
 import * as DomUtil from '../dom/DomUtil';
 
@@ -151,6 +150,7 @@ export var Layers = Control.extend({
 	// @method expand(): this
 	// Expand the control container if collapsed.
 	expand: function () {
+		clearTimeout(this._deferredExpand);
 		DomUtil.addClass(this._container, 'leaflet-control-layers-expanded');
 		this._section.style.height = null;
 		var acceptableHeight = this._map.getSize().y - (this._container.offsetTop + 50);
@@ -167,6 +167,7 @@ export var Layers = Control.extend({
 	// @method collapse(): this
 	// Collapse the control container if expanded.
 	collapse: function () {
+		clearTimeout(this._deferredExpand);
 		DomUtil.removeClass(this._container, 'leaflet-control-layers-expanded');
 		return this;
 	},
@@ -187,24 +188,22 @@ export var Layers = Control.extend({
 		if (collapsed) {
 			this._map.on('click', this.collapse, this);
 
-			if (!Browser.android) {
-				DomEvent.on(container, {
-					mouseenter: this.expand,
-					mouseleave: this.collapse
-				}, this);
-			}
+			DomEvent.on(container, {
+				mouseenter: function () {
+					this._deferredExpand = setTimeout(Util.bind(this.expand, this));
+				},
+				mouseleave: this.collapse
+			}, this);
 		}
 
 		var link = this._layersLink = DomUtil.create('a', className + '-toggle', container);
 		link.href = '#';
 		link.title = 'Layers';
 
-		if (Browser.touch) {
-			DomEvent.on(link, 'click', DomEvent.stop);
-			DomEvent.on(link, 'click', this.expand, this);
-		} else {
-			DomEvent.on(link, 'focus', this.expand, this);
-		}
+		DomEvent.on(link, 'click', function (e) { // necessary for touch
+			DomEvent.preventDefault(e); // prevent link function
+			this.expand();
+		}, this);
 
 		if (!collapsed) {
 			this.expand();
