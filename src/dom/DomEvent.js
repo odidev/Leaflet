@@ -77,6 +77,9 @@ function browserFiresNativeDblClick() {
 	}
 }
 
+
+var needsTouchEventSimulation = !Browser._nativeTouchEvents && navigator.msMaxTouchPoints;
+
 function addOne(obj, type, fn, context) {
 	var id = type + Util.stamp(fn) + (context ? '_' + Util.stamp(context) : '');
 
@@ -88,7 +91,7 @@ function addOne(obj, type, fn, context) {
 
 	var originalHandler = handler;
 
-	if (!Browser._nativeTouchEvents && navigator.msMaxTouchPoints && type.indexOf('touch') === 0) {
+	if (needsTouchEventSimulation && type.indexOf('touch') === 0) {
 		// Needs DomEvent.Pointer.js
 		addPointerListener(obj, type, handler, id);
 
@@ -131,7 +134,7 @@ function removeOne(obj, type, fn, context) {
 
 	if (!handler) { return this; }
 
-	if (!Browser._nativeTouchEvents && navigator.msMaxTouchPoints && type.indexOf('touch') === 0) {
+	if (needsTouchEventSimulation && type.indexOf('touch') === 0) {
 		removePointerListener(obj, type, id);
 
 	} else if (Browser.touch && (type === 'dblclick') && !browserFiresNativeDblClick()) {
