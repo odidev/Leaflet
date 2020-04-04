@@ -199,21 +199,34 @@ describe("Control.Layers", function () {
 	});
 
 	describe("collapse when collapsed: true", function () {
+		var clock;
+
+		beforeEach(function () {
+			clock = sinon.useFakeTimers();
+		});
+
+		afterEach(function () {
+			clock.restore();
+		});
+
 		it('expands when mouse is over', function () {
 			var layersCtrl = L.control.layers(null, null, {collapsed: true}).addTo(map);
 			happen.once(layersCtrl._container, {type:'mouseover'});
+			clock.tick(1); // wait for mouseover (async) function completed
 			expect(map._container.querySelector('.leaflet-control-layers-expanded')).to.be.ok();
 		});
 		it('collapses when mouse is out', function () {
 			var layersCtrl = L.control.layers(null, null, {collapsed: true}).addTo(map);
 			happen.once(layersCtrl._container, {type:'mouseover'});
 			happen.once(layersCtrl._container, {type:'mouseout'});
+			clock.tick(1); // wait for mouseover (async) function completed
 			expect(map._container.querySelector('.leaflet-control-layers-expanded')).to.not.be.ok();
 		});
 		it('collapses when map is clicked', function () {
 			var layersCtrl = L.control.layers(null, null, {collapsed: true}).addTo(map);
 			map.setView([0, 0], 0);
 			happen.once(layersCtrl._container, {type:'mouseover'});
+			clock.tick(1); // wait for mouseover (async) function completed
 			expect(map._container.querySelector('.leaflet-control-layers-expanded')).to.be.ok();
 			happen.click(map._container);
 			expect(map._container.querySelector('.leaflet-control-layers-expanded')).to.not.be.ok();
