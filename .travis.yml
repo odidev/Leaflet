@@ -29,9 +29,6 @@ before_install:
       export QT_QPA_PLATFORM='offscreen'
       export "CHROME_BIN"=/usr/bin/chromium-browser
       export FIREFOX_BIN=/usr/bin/firefox
-    else 
-      firefox: latest
-      chrome: stable
     fi
 script:
   - npm test -- -- --browsers PhantomJSCustom,Chrome1280x1024,FirefoxPointer,FirefoxTouch,FirefoxPointerTouch --reporters dots
