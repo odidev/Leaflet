@@ -30,8 +30,8 @@ before_install:
       export "CHROME_BIN"=/usr/bin/chromium-browser
       export FIREFOX_BIN=/usr/bin/firefox
     else 
-       firefox: latest
-       chrome: stable
+      firefox: latest
+      chrome: stable
     fi
 script:
   - npm test -- -- --browsers PhantomJSCustom,Chrome1280x1024,FirefoxPointer,FirefoxTouch,FirefoxPointerTouch --reporters dots
