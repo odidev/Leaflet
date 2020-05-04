@@ -39,3 +39,5 @@ after_success:
   - NAME=$TRAVIS_BRANCH
   - '[[ $TRAVIS_PULL_REQUEST != ''false'' ]] && NAME=$TRAVIS_PULL_REQUEST'
   - '[[ -n $TRAVIS_TAG ]] && NAME=$TRAVIS_TAG'
+notifications:
+  email: false
