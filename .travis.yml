@@ -29,6 +29,7 @@ before_install:
   - sudo apt-get install phantomjs chromium-browser firefox
   - export QT_QPA_PLATFORM='offscreen'
   - export "CHROME_BIN"=/usr/bin/chromium-browser
+  - xvfb-run --server-args="-screen 0 1280x1024x16"
 script:
   - npm test -- -- --browsers PhantomJSCustom,Chrome1280x1024,FirefoxPointer,FirefoxTouch,FirefoxPointerTouch --reporters dots
 after_success:
