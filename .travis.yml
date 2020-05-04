@@ -11,6 +11,8 @@ addons:
     - dist
     target_paths:
     - content/leaflet/${NAME}
+  firefox: latest
+  chrome: stable
 env:
   global:
   - ARTIFACTS_BUCKET=leafletjs-cdn
