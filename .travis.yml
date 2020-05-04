@@ -27,10 +27,10 @@ env:
       fSJXkxmQ4MAjUdNFDIirBHhdZme8q3PueFzJ+5odFMvPGn/aITQ=
 before_install:
   - if [[ "${TRAVIS_CPU_ARCH}" == "arm64" ]]; then
-      sudo apt-get install phantomjs chromium-browser firefox
-      export QT_QPA_PLATFORM='offscreen'
-      export "CHROME_BIN"=/usr/bin/chromium-browser
-      export FIREFOX_BIN=/usr/bin/firefox
+      sudo apt-get install phantomjs chromium-browser firefox;
+      export QT_QPA_PLATFORM='offscreen';
+      export "CHROME_BIN"=/usr/bin/chromium-browser;
+      export FIREFOX_BIN=/usr/bin/firefox;
     fi
 script:
   - npm test -- -- --browsers PhantomJSCustom,Chrome1280x1024,FirefoxPointer,FirefoxTouch,FirefoxPointerTouch --reporters dots
